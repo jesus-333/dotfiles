@@ -33,7 +33,7 @@ dashboard.section.buttons.val = {
 	dashboard.button("p" , "📁 Find project"		   , "<cmd>lua require('telescope').extensions.projects.projects(require('telescope.themes').get_dropdown({hidden=true}))<cr>"),
 	dashboard.button("t" , "📝 Find text"			   , ":Telescope live_grep <CR>"),
 	dashboard.button("cn", "⚙️ Configuration (nvim)"   , ":e ~/.config/nvim/init.lua <CR>"),
-	dashboard.button("cg", "👻 Configuration (ghostty)", ":e ~/Library/Application Support/com.mitchellh.ghostty/config <CR>"),
+	dashboard.button("cg", "👻 Configuration (ghostty)", ":e ~/.config/ghostty/config <CR>"),
 	dashboard.button("ch", "📚 Harper dictionary"	   , ":e ~/Library/Application Support/harper-ls/dictionary.txt <CR>"),
 	dashboard.button("h" , "🏥 Check Health"		   , ":checkhealth <CR>"),
 	dashboard.button("q" , "🚪 Quit Neovim"			   , ":qa<CR>"),

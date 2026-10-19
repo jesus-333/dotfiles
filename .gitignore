@@ -1,0 +1,6 @@
+.DS_Store
+
+# Files the tools write into their (symlinked) config folder at runtime
+fish/.config/fish/fish_variables
+karabiner/.config/karabiner/automatic_backups/
+sbx-hindsight/sbx-hindsight/backups/

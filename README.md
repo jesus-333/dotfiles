@@ -7,6 +7,7 @@ Running `stow <package>` creates the symlinks in `~` that point back to this rep
 | Package         | Linked to                    |
 |-----------------|------------------------------|
 | `nvim`          | `~/.config/nvim`             |
+| `vim`           | `~/.vimrc`                   |
 | `fish`          | `~/.config/fish`             |
 | `yazi`          | `~/.config/yazi`             |
 | `karabiner`     | `~/.config/karabiner`        |
@@ -25,7 +26,7 @@ git clone https://github.com/jesus-333/dotfiles.git
 cd dotfiles
 
 mkdir -p ~/.config   # so stow links the single tool folders and not the whole ~/.config
-stow nvim fish yazi karabiner starship ghostty sbx-hindsight
+stow nvim vim fish yazi karabiner starship ghostty sbx-hindsight
 ```
 The target (`~`) is set in `.stowrc`, so `stow` must be run from the repo root. `.DS_Store` files are ignored.
 
@@ -79,6 +80,21 @@ cp extras/nerdfonts/* ~/Library/Fonts/
 `nvim/.config/nvim` is the only source of truth for the Neovim config. It is also published in the standalone [neovim-config](https://github.com/jesus-333/neovim-config) repo, so it can be installed on machines where only Neovim is needed.
 Keep the folder self-contained (no references to the rest of this repo).
 `nvim/.config/nvim/other` contains extra material for the nvim config (screenshots, keybindings, LSP notes) and the old `.tmux.conf` (not used anymore, kept as reference).
+
+## vim
+Single-file config (`.vimrc`, no plugins) used as a backup editor in case the Neovim config breaks. It mirrors the options and the main keymaps (movement, buffers, save/close) of the Neovim config. Colorscheme: built-in `habamax` (needs vim >= 9).
+Plugin features replaced with built-in vim (leader = space):
+
+| Keys | Action | Neovim equivalent |
+|------|--------|-------------------|
+| `<leader>f` | `:find` file in subfolders (Tab completes) | Telescope find_files |
+| `<leader>t` / `<leader>gs` | `:Grep {pattern}` / word under cursor, results in quickfix | Telescope live_grep / grep_string |
+| `<leader>bb` / `<leader>bo` / `<leader>br` | buffers / old files / registers | Telescope pickers |
+| `<leader>e` | netrw file explorer | Yazi |
+| `<leader>r1` / `<leader>r2` | replace in file / line | same |
+| `<leader>cn` | open the Neovim config | alpha `cn` button |
+| `((` `""` `''` ` `` ` `))` `"(` `("` `"'` `'"` | surround word / remove / replace | nvim-surround |
+| `gcc` / `gc` | toggle comments | Comment.nvim |
 
 ## fish
 `fish_variables` is not tracked: fish rewrites it continuously and it contains machine state (universal variables).

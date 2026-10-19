@@ -1,6 +1,7 @@
 # Tools configured by stow-factory-reset (one per line, '#' starts a comment).
 # Each name must be a folder (stow package) in this repo.
 nvim
+vim
 fish
 yazi
 karabiner

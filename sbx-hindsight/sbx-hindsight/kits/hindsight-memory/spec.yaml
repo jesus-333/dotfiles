@@ -1,0 +1,96 @@
+# Points the agent's Hindsight plugin at the Hindsight server, which runs in its
+# own "hindsight" sandbox and is published on the host as localhost:8888.
+# Inside a sandbox, host.docker.internal:8888 reaches that host port.
+# Also installs the WakaTime plugin for every agent present (claude / codex / pi).
+schemaVersion: "2"
+kind: mixin
+name: hindsight-memory
+description: Hindsight long-term memory (server on host:8888, bank jesus_all_projects_bank) + WakaTime
+
+permissions:
+  network:
+    allow:
+      - localhost:8888          # host.docker.internal:8888 is rewritten to localhost
+      - registry.npmjs.org      # npx install + plugin autoUpdate + pi-wakatime
+      - github.com              # claude/codex WakaTime marketplace clones
+      - codeload.github.com
+      - api.github.com          # wakatime-cli version check
+      - objects.githubusercontent.com          # wakatime-cli download
+      - release-assets.githubusercontent.com
+      - api.wakatime.com        # WakaTime heartbeats
+
+setup:
+  install:
+    - user: "1000"
+      command: |
+        set -eu
+        mkdir -p ~/.hindsight
+        cat > ~/.hindsight/coding-agent.json <<'JSON'
+        {
+          "serverMode": "self-hosted",
+          "apiUrl": "http://host.docker.internal:8888",
+          "bankId": "jesus_all_projects_bank",
+          "retainTags": ["project:{gitProject}"],
+          "retainMetadata": { "repo": "{gitProject}" },
+          "customPages": {
+            "Project: dtw_loss_function": {
+              "source_query": "Overview of the dtw_loss_function repository: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:dtw_loss_function"]
+            },
+            "Project: llm_jesus_tools": {
+              "source_query": "Overview of the llm_jesus_tools (JLT) repository: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:llm_jesus_tools"]
+            },
+            "Project: clinnova-fl": {
+              "source_query": "Overview of the clinnova-fl repository: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:clinnova-fl"]
+            },
+            "Project: DL_for_EEG": {
+              "source_query": "Overview of the DL_for_EEG repository, including the jade Python package it contains: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:DL_for_EEG"]
+            },
+            "Project: Variational-Autoencoder-for-EEG-analysis": {
+              "source_query": "Overview of the Variational-Autoencoder-for-EEG-analysis repository: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:Variational-Autoencoder-for-EEG-analysis"]
+            },
+            "Project: DL_for_AD_detection": {
+              "source_query": "Overview of the DL_for_AD_detection (ADNI) repository: purpose, main components, key decisions, conventions and current initiatives.",
+              "tags": ["project:DL_for_AD_detection"]
+            },
+            "Project: papers": {
+              "source_query": "Overview of the papers workspace, which holds the LaTeX sources of all papers. The papers folder itself is not a git repository; each paper lives in its own subfolder, which is a separate git repository synchronized with Overleaf. Cover: papers in progress and their status, relations between papers (continuations, extensions), sections/figures/bibliography shared or reused across papers, writing and notation conventions, and key decisions.",
+              "tags": ["project:papers"]
+            },
+            "Project: dotfiles": {
+              "source_query": "Overview of the dotfiles repository, which backs up the configuration of the user's tools (e.g. nvim, fish) and is managed with GNU Stow: one stow package per tool, symlinked into the home directory. Cover: which tools are included and where their configs live, the package layout and stow conventions, how new tools are added, files deliberately excluded (secrets, machine-specific or generated files), and key decisions.",
+              "tags": ["project:dotfiles"]
+            }
+          }
+        }
+        JSON
+        # Codex hooks are behind a feature flag (also needed by the WakaTime Codex plugin)
+        if command -v codex >/dev/null; then
+          mkdir -p ~/.codex
+          grep -q codex_hooks ~/.codex/config.toml 2>/dev/null || \
+            printf '\n[features]\ncodex_hooks = true\n' >> ~/.codex/config.toml
+        fi
+        # Wires every agent present in the image (claude / codex / pi)
+        npx -y @vectorize-io/hindsight-coding-agents install all \
+          --server self-hosted --api-url http://host.docker.internal:8888 || true
+
+    # WakaTime time tracking. Every install line is non-fatal.
+    - user: "1000"
+      command: |
+        set -u
+        if command -v claude >/dev/null; then
+          claude plugin marketplace add https://github.com/wakatime/claude-code-wakatime.git || true
+          claude plugin install claude-code-wakatime@wakatime || true
+        fi
+        if command -v codex >/dev/null; then
+          codex plugin marketplace add wakatime/codex-cli-wakatime || true
+          codex plugin add codex-cli-wakatime@wakatime || true
+        fi
+        # Third-party package (ttttmr/pi-wakatime)
+        if command -v pi >/dev/null; then
+          pi install npm:pi-wakatime || true
+        fi

@@ -42,6 +42,20 @@ Stow refuses to overwrite real files. If a config already exists (e.g. `~/.confi
 mv ~/.config/nvim ~/.config/nvim.bak
 stow nvim
 ```
+If a single conflict is found, stow aborts **all** the packages.
+Some tools recreate their config folder as soon as it is missing (e.g. a running fish shell recreates `~/.config/fish`, Karabiner-Elements recreates `~/.config/karabiner`). Quit them, or move the folder and stow in a single command line
+```fish
+mv ~/.config/fish ~/.config/fish.bak; and stow fish
+```
+
+## Reset all the links (`stow-factory-reset`)
+The fish function `stow-factory-reset` (in the `fish` package) recreates the links of all the tools listed in `tools_list.txt` (one per line). Run it from the stow folder, e.g. to switch to another stow folder or to fix broken links
+```fish
+cd ~/Desktop/Projects/dotfiles
+stow-factory-reset -n   # dry run: show what would be done
+stow-factory-reset
+```
+It removes the old links (even if they point to another stow folder), moves real `~/.config/fish` / `~/.config/karabiner` folders recreated by the tools to `~/.stow-factory-reset-backup/`, keeps `fish_variables`, and stops without changing anything if a real file is in the way. Karabiner-Elements must be closed.
 
 ## Fonts
 Install the nerd fonts by copying them to the fonts folder

@@ -1,0 +1,91 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Tabs
+
+# New tab
+keybind = ctrl+space>c=new_tab
+
+# Go to specific tab
+keybind = alt+1=goto_tab:1
+keybind = alt+2=goto_tab:2
+keybind = alt+3=goto_tab:3
+keybind = alt+4=goto_tab:4
+keybind = alt+5=goto_tab:5
+keybind = alt+6=goto_tab:6
+keybind = alt+7=goto_tab:7
+keybind = alt+8=goto_tab:8
+keybind = alt+9=goto_tab:9
+keybind = alt+0=last_tab
+
+keybind = ctrl+space>k=close_window
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Splits
+
+# Create split
+keybind = ctrl+space>v=new_split:right
+keybind = ctrl+space>h=new_split:down
+keybind = ctrl+space>space=equalize_splits
+
+keybind = ctrl+space>a=inspector:toggle
+
+# Move between splits
+keybind = alt+h=goto_split:left 
+keybind = alt+j=goto_split:bottom 
+keybind = alt+k=goto_split:top
+keybind = alt+l=goto_split:right
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Windows
+
+window-vsync = true 
+window-inherit-working-directory = false
+window-inherit-font-size = true
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Clipboard and text interaction
+
+copy-on-select = true
+clipboard-read = allow
+clipboard-write = allow
+
+keybind = ctrl+v=paste_from_clipboard
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Graphic stuff
+
+theme = Catppuccin Mocha
+
+font-family = Liga SFMono Nerd Font
+font-style = Regular
+font-size = 13.5
+font-thicken = true
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Various config
+
+# Cli applications
+keybind = ctrl+space>z=text:lazygit\n
+keybind = ctrl+space>n=text:nvim\n
+keybind = ctrl+space>e=text:yazi\n
+keybind = ctrl+space>b=text:btop\n
+keybind = ctrl+space>l=text:lla\n
+keybind = ctrl+space>i=text:ipython\n%load_ext autoreload\n%autoreload 2\n
+
+# Session setup
+# keybind = ctrl+space>c>1=text:lazygit\n
+
+# Reload config
+keybind = ctrl+space>r=reload_config
+
+# Copy/Paste settings
+copy-on-select = clipboard
+
+# Navitagations
+# keybind = ctrl+space>space=text:open .\n
+keybind = ctrl+space>u=text:cd ..\n
+
+# Fzf
+keybind = ctrl+space>t=text:fzf-file-widget\n
+keybind = ctrl+space>f=text:fzf-cd-widget\n
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

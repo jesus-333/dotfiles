@@ -11,6 +11,7 @@ Running `stow <package>` creates the symlinks in `~` that point back to this rep
 | `yazi`          | `~/.config/yazi`             |
 | `karabiner`     | `~/.config/karabiner`        |
 | `starship`      | `~/.config/starship.toml`    |
+| `ghostty`       | `~/.config/ghostty/config`   |
 | `sbx-hindsight` | `~/sbx-hindsight/kits`       |
 
 `extras/` is **not** a stow package. It contains files that are not configs (nerd fonts, keyboard layout).
@@ -24,7 +25,7 @@ git clone https://github.com/jesus-333/dotfiles.git
 cd dotfiles
 
 mkdir -p ~/.config   # so stow links the single tool folders and not the whole ~/.config
-stow nvim fish yazi karabiner starship sbx-hindsight
+stow nvim fish yazi karabiner starship ghostty sbx-hindsight
 ```
 The target (`~`) is set in `.stowrc`, so `stow` must be run from the repo root. `.DS_Store` files are ignored.
 
@@ -51,7 +52,7 @@ cp extras/nerdfonts/* ~/Library/Fonts/
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 
 # Add a new tool
-1. Create a folder with the name of the tool and reproduce the path relative to `~` inside it, e.g. `ghostty/.config/ghostty/config.ghostty`
+1. Create a folder with the name of the tool and reproduce the path relative to `~` inside it, e.g. `btop/.config/btop/btop.conf`
 2. Move the existing config inside it
 3. Run `stow <tool>`
 4. If the tool writes machine-specific/generated files inside its config folder, add them to `.gitignore`
@@ -80,6 +81,23 @@ Plugins are saved in `plugins/` and listed in `package.toml`.
 Karabiner-Elements rewrites `karabiner.json` by replacing the file, which would break a symlink pointing to the single file.
 For this reason the **whole** `~/.config/karabiner` folder must be a symlink. This is what stow does by default if `~/.config/karabiner` does not exist when running `stow karabiner`.
 The automatic backups created by Karabiner are not tracked.
+
+## ghostty
+On macOS Ghostty reads both `~/.config/ghostty/config` (XDG path, used here) and `~/Library/Application Support/com.mitchellh.ghostty/config`. The second one is loaded **after** and overrides the first, so it must not exist (or must be empty).
+
+### Problem with ssh 
+
+From Ghostty [website](https://ghostty.org/docs/help/terminfo#ssh) :
+
+> If you use SSH to connect to other machines that do not have Ghostty's terminfo entry, you will see error messages like missing or unsuitable terminal: xterm-ghostty, Error opening terminal: xterm-ghostty. or WARNING: terminal is not fully functional.
+> Hopefully someday Ghostty will have terminfo entries pre-distributed everywhere, but in the meantime there are two ways to resolve the situation:
+> 1 - Copy Ghostty's terminfo entry to the remote machine.
+> 2 - Configure SSH to fall back to a known terminfo entry.
+
+Between the two solution proposed I like this one :
+```bash
+infocmp -x xterm-ghostty | ssh YOUR-SERVER -- tic -x -
+```
 
 ## sbx-hindsight
 Kits used to create the docker sandboxes (`sbx`). Only `kits/` is tracked; the Hindsight backups (`~/sbx-hindsight/backups`, created by `hs-backup`) are not.

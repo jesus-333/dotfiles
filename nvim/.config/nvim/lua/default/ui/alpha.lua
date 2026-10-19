@@ -1,0 +1,67 @@
+local status_ok, alpha = pcall(require, "alpha")
+if not status_ok then
+	print("Problemi with alpha")
+	return
+end
+
+local status_ok, alpha_fortune = pcall(require, "alpha.fortune")
+if not status_ok then
+	print("Problemi with alpha fortune fortune")
+	return
+end
+
+local dashboard = require("alpha.themes.dashboard")
+dashboard.section.header.val = {
+    "⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⣀⣤⣴⣶⣾⣿⣿⣿⣶⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀ ",
+    "⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣿⣿⡟⠁⠀⠀⠀⠈⢻⣿⣿⣿⠀⠀⠀⠀⠀⠀ ",
+    "⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⠛⠛⠛⠛⠛⠛⢛⣿⣮⣿⣿⣿⠀⠀⠀⠀⠀⠀⢈⣿⣿⡟⠀⠀⠀⠀⠀⠀ ",
+    "⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣧⡀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⢀⣼⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣶⣿⣿⣿⣿⠟⠉⠻⣿⣿⣿⣿⣶⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⡇⣠⣷⡀⢹⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠋⠛⠋⠛⠙⠛⠙⠛⠙⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+}
+dashboard.section.buttons.val = {
+	dashboard.button("f" , "🔍 Find file"			   , ":Telescope find_files <CR>"),
+	dashboard.button("e" , "📄 New file"			   , ":ene <BAR> startinsert <CR>"),
+	dashboard.button("p" , "📁 Find project"		   , "<cmd>lua require('telescope').extensions.projects.projects(require('telescope.themes').get_dropdown({hidden=true}))<cr>"),
+	dashboard.button("t" , "📝 Find text"			   , ":Telescope live_grep <CR>"),
+	dashboard.button("cn", "⚙️ Configuration (nvim)"   , ":e ~/.config/nvim/init.lua <CR>"),
+	dashboard.button("cg", "👻 Configuration (ghostty)", ":e ~/Library/Application Support/com.mitchellh.ghostty/config <CR>"),
+	dashboard.button("ch", "📚 Harper dictionary"	   , ":e ~/Library/Application Support/harper-ls/dictionary.txt <CR>"),
+	dashboard.button("h" , "🏥 Check Health"		   , ":checkhealth <CR>"),
+	dashboard.button("q" , "🚪 Quit Neovim"			   , ":qa<CR>"),
+	--[[ dashboard.button("r", "  Recently used files", ":Telescope oldfiles <CR>"), ]]
+}
+
+local function footer()
+	return "Jesus Neovim Config"
+end
+
+dashboard.section.footer.val = alpha_fortune()
+
+dashboard.section.footer.opts.hl = "Type"
+dashboard.section.header.opts.hl = "Include"
+dashboard.section.buttons.opts.hl = "Keyword"
+
+dashboard.opts.opts.noautocmd = true
+-- vim.cmd([[autocmd User AlphaReady echo 'ready']])
+alpha.setup(dashboard.opts)
+
+--[[ vim.cmd('Alpha') ]]
+
+-- Backup old icons
+--[[ dashboard.button("f" , " Find file"			   , ":Telescope find_files <CR>"), ]]
+--[[ dashboard.button("e" , " New file"			   , ":ene <BAR> startinsert <CR>"), ]]
+--[[ dashboard.button("p" , " Find project"		   , "<cmd>lua require('telescope').extensions.projects.projects(require('telescope.themes').get_dropdown({hidden=true}))<cr>"), ]]
+--[[ dashboard.button("t" , "󰟵 Find text"			   , ":Telescope live_grep <CR>"), ]]
+--[[ dashboard.button("cn", " Configuration (nvim)"   , ":e ~/.config/nvim/init.lua <CR>"), ]]
+--[[ dashboard.button("cg", " Configuration (ghostty)", ":e ~/.config/nvim/other/.tmux.conf <CR>"), ]]
+--[[ dashboard.button("h" , "󰋠 Check Health"		   , ":checkhealth <CR>"), ]]
+--[[ dashboard.button("q" , "󰩈 Quit Neovim"			   , ":qa<CR>"), ]]

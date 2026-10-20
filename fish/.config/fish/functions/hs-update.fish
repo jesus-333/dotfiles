@@ -12,7 +12,7 @@
 #   2. read the running version and pull :latest to read the newest version
 #   3. stop if they are the same, or if :latest looks like a prerelease
 #   4. ask for confirmation
-#   5. back up the data with hs-backup (always, it cannot be skipped)
+#   5. snapshot the data volume with hs-snapshot (always, it cannot be skipped)
 #   6. find docker-compose.yml from the container labels, back it up and pin
 #      the image to the exact new version (ghcr.io/vectorize-io/hindsight:X.Y.Z)
 #   7. recreate the container with docker compose up -d
@@ -44,7 +44,7 @@ function hs-update --description 'Back up and update the Hindsight server to the
         echo "usage: hs-update [-y|--yes] [-f|--force]"
         echo
         echo "Pull ghcr.io/vectorize-io/hindsight:latest and, if it is newer than the"
-        echo "running server, back up the data (hs-backup), pin the new version in"
+        echo "running server, snapshot the data (hs-snapshot), pin the new version in"
         echo "docker-compose.yml and recreate the container."
         echo
         echo "  -y, --yes     do not ask for confirmation (the backup is still done)"
@@ -135,10 +135,10 @@ function hs-update --description 'Back up and update the Hindsight server to the
     set -l compose_file $files[1]
 
     # --- 7. Back up the data (mandatory) ----------------------------------------
-    # hs-backup stops the container, archives the hindsight-data volume to
+    # hs-snapshot stops the container, archives the hindsight-data volume to
     # ~/sbx-hindsight/backups and starts the container again.
     echo "hs-update: backing up the data ..." >&2
-    if not hs-backup
+    if not hs-snapshot
         echo "hs-update: backup failed, nothing was updated" >&2
         return 1
     end

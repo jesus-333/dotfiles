@@ -130,13 +130,29 @@ infocmp -x xterm-ghostty | ssh YOUR-SERVER -- tic -x -
 ```
 
 ## sbx-hindsight
-Kits used to create the docker sandboxes (`sbx`). Only `kits/` is tracked; the Hindsight backups (`~/sbx-hindsight/backups`, created by `hs-backup`) are not.
+Kits used to create the docker sandboxes (`sbx`). Only `kits/` is tracked; the Hindsight backups (`~/sbx-hindsight/backups`, created by `hs-backup` and `hs-snapshot`) are not.
 
 ### Check and update the Hindsight server (`hs-version`, `hs-update`)
 ```fish
 hs-version      # running version, latest on ghcr.io (pulls :latest), latest plugin on npm
-hs-update       # backup + pin the new version in docker-compose.yml + recreate the container
-hs-update -y    # same, without the confirmation (the backup is always done)
+hs-update       # volume snapshot (hs-snapshot) + pin the new version in docker-compose.yml + recreate the container
+hs-update -y    # same, without the confirmation (the snapshot is always done)
 ```
 `hs-update` reads the compose file location from the container labels, keeps a `.bak-<timestamp>` copy of it next to the original, and refuses prerelease versions unless `--force` is given. If the new version does not start, nothing is rolled back automatically (migrations may have changed the data): restore the compose backup **and** the data backup.
 The coding-agent plugin is not updated by `hs-update`: the `hindsight-memory` kit installs the latest one when an agent sandbox is created (`sbk` + `sb`).
+
+### Back up and restore the memory banks (`hs-backup`, `hs-restore`)
+They use only the Hindsight HTTP API (`curl` + `jq`), so the archives can be restored into **any** Hindsight instance (Docker, sbx, pip, remote), even one with another embedding model.
+```fish
+hs-backup                       # all banks -> ~/sbx-hindsight/backups/hindsight_backup_latest (replaced)
+hs-backup --timestamp --note x  # new hindsight_backup_<YYYY-MM-DD_HHMMSS> folder, never overwritten
+hs-restore --list               # list the backups
+hs-restore --dry-run            # show what restoring the latest backup would do
+hs-restore --bank <id> --as <new-id>   # load one bank under another id
+hs-restore --replace            # overwrite existing banks (a pre-restore backup is made first)
+```
+`--url`, `--token` and `--dir` (or `HS_API_URL`, `HS_API_TOKEN`, `HS_BACKUP_DIR`) select another instance / backup folder; the defaults are `http://localhost:8888`, no token, `~/sbx-hindsight/backups`.
+Each folder holds one `bank-<id>.zip` per bank and a `manifest.json` (date, note, source, sha256 and counts). Archives carry documents, facts, observations, mental models, knowledge pages and bank config, not the embeddings: the import re-embeds them (no LLM calls).
+To move to a new instance, run `hs-restore --url <new-url>` **before** any agent uses it: banks are created on first use, and an existing bank blocks the import.
+
+`hs-snapshot` (used by `hs-update`) is the old raw copy of the `hindsight-data` Docker volume: it only works with this sbx/Docker installation.

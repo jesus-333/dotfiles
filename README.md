@@ -131,3 +131,12 @@ infocmp -x xterm-ghostty | ssh YOUR-SERVER -- tic -x -
 
 ## sbx-hindsight
 Kits used to create the docker sandboxes (`sbx`). Only `kits/` is tracked; the Hindsight backups (`~/sbx-hindsight/backups`, created by `hs-backup`) are not.
+
+### Check and update the Hindsight server (`hs-version`, `hs-update`)
+```fish
+hs-version      # running version, latest on ghcr.io (pulls :latest), latest plugin on npm
+hs-update       # backup + pin the new version in docker-compose.yml + recreate the container
+hs-update -y    # same, without the confirmation (the backup is always done)
+```
+`hs-update` reads the compose file location from the container labels, keeps a `.bak-<timestamp>` copy of it next to the original, and refuses prerelease versions unless `--force` is given. If the new version does not start, nothing is rolled back automatically (migrations may have changed the data): restore the compose backup **and** the data backup.
+The coding-agent plugin is not updated by `hs-update`: the `hindsight-memory` kit installs the latest one when an agent sandbox is created (`sbk` + `sb`).

@@ -1,7 +1,8 @@
 # Points the agent's Hindsight plugin at the Hindsight server, which runs in its
 # own "hindsight" sandbox and is published on the host as localhost:8888.
 # Inside a sandbox, host.docker.internal:8888 reaches that host port.
-# Also installs the WakaTime plugin for every agent present (claude / codex / pi).
+# Also installs the WakaTime plugin for every agent present (claude / codex / pi)
+# and poppler-utils for reading PDFs.
 schemaVersion: "2"
 kind: mixin
 name: hindsight-memory
@@ -18,9 +19,23 @@ permissions:
       - objects.githubusercontent.com          # wakatime-cli download
       - release-assets.githubusercontent.com
       - api.wakatime.com        # WakaTime heartbeats
+      - ports.ubuntu.com        # apt mirror (arm64), for poppler-utils
+      - archive.ubuntu.com      # apt mirror (amd64)
+      - security.ubuntu.com
 
 setup:
   install:
+    # poppler-utils (pdftoppm / pdftotext / pdfinfo) so agents can render and
+    # read PDF pages. No TeX here: LaTeX is compiled on the host only.
+    - user: "0"
+      command: |
+        set -eu
+        if ! command -v pdftoppm >/dev/null; then
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update || true   # a blocked third-party repo must not stop the install
+          apt-get install -y --no-install-recommends poppler-utils
+        fi
+
     - user: "1000"
       command: |
         set -eu

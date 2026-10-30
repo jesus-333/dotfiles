@@ -99,6 +99,8 @@ Plugin features replaced with built-in vim (leader = space):
 ## fish
 `fish_variables` is not tracked: fish rewrites it continuously and it contains machine state (universal variables).
 
+`myfuncs` lists all the custom functions in `functions/` with their short description (`-a` also shows the private `_` helpers). New functions appear automatically, as long as they are defined with `--description`.
+
 ## yazi
 Install/Update
 ```bash

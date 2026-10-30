@@ -79,6 +79,10 @@ setup:
             "Project: dotfiles": {
               "source_query": "Overview of the dotfiles repository, which backs up the configuration of the user's tools (e.g. nvim, fish) and is managed with GNU Stow: one stow package per tool, symlinked into the home directory. Cover: which tools are included and where their configs live, the package layout and stow conventions, how new tools are added, files deliberately excluded (secrets, machine-specific or generated files), and key decisions.",
               "tags": ["project:dotfiles"]
+            },
+            "Project: manus-dei": {
+              "source_query": "Overview of the manus-dei (ManusDei) repository, a local browser-based editor for designing fantasy world maps. Cover: purpose, tech stack, main components and architecture, the project file format, key decisions and changes to the specification, conventions and testing rules, performance, and current initiatives.",
+              "tags": ["project:manus-dei"]
             }
           }
         }

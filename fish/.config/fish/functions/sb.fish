@@ -22,8 +22,12 @@ function sb --description 'Start or re-attach a sandboxed agent: sb <claude|code
     set -q SB_CPUS; and set cpus $SB_CPUS
     set -l mem 6g
     set -q SB_MEMORY; and set mem $SB_MEMORY
-    # Community kit for pi with ChatGPT OAuth; pin a version once you have tested one
-    set -l pi_kit ghcr.io/rocknitive/pi-kit:latest
+    # Community kit for pi with ChatGPT OAuth (upstream avatsav: the rocknitive fork
+    # is not publicly pullable from GHCR); pin a version once you have tested one
+    # TODO: if sbx ever ships pi as a built-in agent (check `sbx run --help`), drop
+    # the kit: remove pi_kit/SB_PI_KIT and the workload swap below, so pi is passed
+    # to sbx create like claude and codex.
+    set -l pi_kit ghcr.io/avatsav/pi-kit:latest
     set -q SB_PI_KIT; and set pi_kit $SB_PI_KIT
 
     # --- refuse to start without the memory server ---------------------------

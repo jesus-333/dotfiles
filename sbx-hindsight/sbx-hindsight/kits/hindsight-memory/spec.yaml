@@ -83,6 +83,10 @@ setup:
             "Project: manus-dei": {
               "source_query": "Overview of the manus-dei (ManusDei) repository, a local browser-based editor for designing fantasy world maps. Cover: purpose, tech stack, main components and architecture, the project file format, key decisions and changes to the specification, conventions and testing rules, performance, and current initiatives.",
               "tags": ["project:manus-dei"]
+            },
+            "Project: room of forgettable experience": {
+              "source_query": "Overview of the room_of_forgettable_experience workspace, a git repository used as the catch-all for short-lived work that does not belong to any other project: quick tests of new tools or libraries, limited data extractions, on-the-fly analyses and other throwaway experiments, each kept in its own subfolder. Cover: what each experiment was about and what it found, tools and techniques tried and whether they worked, reusable snippets or findings worth carrying into a real project, and key decisions.",
+              "tags": ["project:room_of_forgettable_experience"]
             }
           }
         }

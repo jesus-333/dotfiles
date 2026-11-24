@@ -1,6 +1,7 @@
 # sbs — Save the conversation history (sessions) of an agent sandbox.
 #
-# Usage:  sbs claude|codex|pi [dir]
+# Usage:  sbs [-t | -n] claude|codex|pi [dir]
+#   -t / -n target the throwaway / no-memory sandbox (same flags as `sb`)
 #
 # Why: the agent keeps its sessions in its home directory inside the sandbox
 # (/home/agent), which is destroyed together with the sandbox. The workspace
@@ -8,18 +9,23 @@
 # This function copies the sessions into <dir>/.agent-sessions/<agent>/, where
 # they can be restored later with `sbr` into a recreated sandbox.
 
-function sbs --description 'Save agent sessions of sandbox <agent> [dir] into <dir>/.agent-sessions/<agent>'
+function sbs --description 'Save agent sessions of sandbox [-t|-n] <agent> [dir] into <dir>/.agent-sessions/<agent>'
     # --- 1. Parse options ----------------------------------------------------
     # argparse removes recognised flags from $argv and sets $_flag_help if
     # -h or --help was given. Unknown flags make argparse fail with an error.
-    argparse h/help -- $argv; or return 1
+    # -t / -n select the throwaway / no-memory sandbox, as in `sb`
+    # (mutually exclusive: -x t,n).
+    argparse -x t,n h/help t/tmp n/nomem -- $argv; or return 1
 
     if set -q _flag_help
-        echo "usage: sbs claude|codex|pi [dir]"
+        echo "usage: sbs [-t | -n] claude|codex|pi [dir]"
         echo
         echo "Save the agent sessions of the sandbox for <dir> (default: current folder)"
         echo "into <dir>/.agent-sessions/<agent>/, so they survive deleting the sandbox."
         echo "Restore them later with: sbr <agent> [dir]"
+        echo
+        echo "  -t, --tmp    the throwaway sandbox  (<folder>-<agent>-tmp)"
+        echo "  -n, --nomem  the no-memory sandbox  (<folder>-<agent>-nomem)"
         return 0
     end
 
@@ -27,7 +33,7 @@ function sbs --description 'Save agent sessions of sandbox <agent> [dir] into <d
     # The first positional argument must be one of the three supported agents.
     set -l agent $argv[1]
     if not contains -- "$agent" claude codex pi
-        echo "usage: sbs claude|codex|pi [dir]   (sbs --help for details)" >&2
+        echo "usage: sbs [-t | -n] claude|codex|pi [dir]   (sbs --help for details)" >&2
         return 1
     end
 
@@ -39,7 +45,8 @@ function sbs --description 'Save agent sessions of sandbox <agent> [dir] into <d
 
     # __sb_name builds the same sanitised name that `sb` uses (<folder>-<agent>,
     # lowercase, only a-z 0-9 -), so we target exactly the sandbox `sb` created.
-    set -l name (__sb_name $dir $agent)
+    set -l suffix (__sb_suffix "$_flag_tmp" "$_flag_nomem")
+    set -l name (__sb_name $dir $agent $suffix)
 
     # --- 4. Check that the sandbox exists -------------------------------------
     # `sbx ls` prints one sandbox per line, starting with its name. The regex

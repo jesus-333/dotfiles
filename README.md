@@ -13,6 +13,7 @@ Running `stow <package>` creates the symlinks in `~` that point back to this rep
 | `karabiner`     | `~/.config/karabiner`        |
 | `starship`      | `~/.config/starship.toml`    |
 | `ghostty`       | `~/.config/ghostty/config`   |
+| `tmux`          | `~/.config/tmux/tmux.conf`   |
 | `sbx-hindsight` | `~/sbx-hindsight/kits`       |
 
 `extras/` is **not** a stow package. It contains files that are not configs (nerd fonts, keyboard layout).
@@ -26,7 +27,7 @@ git clone https://github.com/jesus-333/dotfiles.git
 cd dotfiles
 
 mkdir -p ~/.config   # so stow links the single tool folders and not the whole ~/.config
-stow nvim vim fish yazi karabiner starship ghostty sbx-hindsight
+stow nvim vim fish yazi karabiner starship ghostty tmux sbx-hindsight
 ```
 The target (`~`) is set in `.stowrc`, so `stow` must be run from the repo root. `.DS_Store` files are ignored.
 
@@ -131,8 +132,23 @@ Between the two solution proposed I like this one :
 infocmp -x xterm-ghostty | ssh YOUR-SERVER -- tic -x -
 ```
 
+## tmux
+`tmux.conf` emulates the Ghostty config: same prefix (`C-Space`) and keys, with Ghostty tabs → tmux windows, splits → panes, windows → sessions. Theme is a hand-written Catppuccin Mocha status bar (no plugins). Needs tmux >= 3.2.
+When tmux runs **inside** Ghostty (also through ssh), Ghostty catches `C-Space`, `Alt+1..0` and `Alt+hjkl` first, so they never reach tmux: use it from other terminals, or change the prefix.
+
 ## sbx-hindsight
 Kits used to create the docker sandboxes (`sbx`). Only `kits/` is tracked; the Hindsight backups (`~/sbx-hindsight/backups`, created by `hs-backup` and `hs-snapshot`) are not.
+
+Two kits: `base-tools` (poppler-utils, WakaTime, Codex hooks flag) goes into every agent sandbox, `hindsight-memory` (the memory plugin) only into the ones linked to the bank.
+
+### Agent sandboxes with and without memory (`sb`, `sbk`, `sbs`, `sbr`)
+```fish
+sb claude [dir]      # <folder>-claude: linked to Hindsight (refuses to start if the server is down)
+sb -t claude [dir]   # <folder>-claude-tmp: no memory, deleted as soon as the agent exits
+sb -n claude [dir]   # <folder>-claude-nomem: no memory, kept; re-run to re-attach, delete with sbk -n
+```
+Use `-t` for quick jobs that should not end up in long-term memory (assess a codebase, summarise some PDFs), `-n` for the same kind of work when it spans several sittings. Files written in `[dir]` stay on the host in every case.
+`sbk`, `sbs` and `sbr` take the same `-t` / `-n` flags to target the matching sandbox. If a `-t` sandbox already exists (another terminal, or a run that was interrupted), `sb -t` attaches to it but does not delete it on exit: remove it with `sbk -t`.
 
 ### Check and update the Hindsight server (`hs-version`, `hs-update`)
 ```fish
